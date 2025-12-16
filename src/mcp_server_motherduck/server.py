@@ -114,6 +114,17 @@ def build_application(
         logger.info("Listing tools")
         return [
             types.Tool(
+                name="get_instructions",
+                description="Ottieni le istruzioni complete per analizzare il dataset Predicting Manufacturing Defects. "
+                            "Include: schema del database, colonne disponibili, esempi di query, strategie di analisi. "
+                            "Chiama questo tool all'inizio per capire come lavorare con il dataset.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                },
+            ),
+            types.Tool(
                 name="query",
                 description="Esegui una query SQL (dialetto DuckDB) su MotherDuck/DuckDB. "
                             "Supporta SELECT/CTE e, se richiesto, anche INSERT/UPDATE sulle tabelle autorizzate.",
@@ -140,7 +151,14 @@ def build_application(
         """
         logger.info(f"Calling tool: {name}::{arguments}")
         try:
-            if name == "query":
+            if name == "get_instructions":
+                return [
+                    types.TextContent(
+                        type="text",
+                        text=DEFAULT_INITIAL_PROMPT
+                    )
+                ]
+            elif name == "query":
                 if arguments is None:
                     return [
                         types.TextContent(type="text", text="Error: No query provided")
